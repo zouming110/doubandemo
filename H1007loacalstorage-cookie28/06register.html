@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+		<style type="text/css">
+			*{
+				margin: 0;
+				padding: 0;
+			}
+			#wrap{
+				width: 320px;
+				height: 480px;
+				border: 2px solid black;
+				margin: 50px auto;
+				text-align: center;
+			}
+			#QQ{
+				margin-top: 150px;
+			}
+			#pw{
+				margin: 20px 0;
+			}
+			#register{
+				margin: 20px 0;
+			}
+		</style>
+	</head>
+	<body>
+		<h1>注册界面</h1>
+		<div id="wrap">
+			<input type="button" value="登录" id="login">
+			<br>
+			QQ:<input type="text" id="QQ"><br>
+			密码:<input type="password" id="pw"><br>
+			确认密码:<input type="password" id="repeatPW"><br>
+			<input type="button" value="注册" id="register">
+		</div>
+	</body>
+	<script src="js/jquery-2.2.4.min.js" type="text/javascript" charset="utf-8"></script>
+	<script src="js/cookie.js" type="text/javascript" charset="utf-8"></script>
+	<script type="text/javascript">
+		$("#login").click(function(){
+			location.href = "06login.html";
+		})
+		//注册按钮的点击事件
+		$("#register").click(function(){
+			var regQQ = /^[1-9]\d{5,12}$/;
+			var regPW = /^\w{6,16}$/;
+			if (!regQQ.test($("#QQ").val()) || !regPW.test($("#pw").val())) {
+				alert("QQ号或者密码输入不正确!");
+				return;//提前终止
+			}
+			if ($("#pw").val() != $("#repeatPW").val()) {
+				alert("两次输入密码不一致!");
+				return;
+			}
+			//存储注册的账号和密码,cookie中使用qq和pw来存储
+			if (isCookieKey("qq")) {
+				console.log(getCookie("qq"));
+				//第二次及第二次以上注册
+				//判断此次注册的账号,之前是否存在,如果存在,则注册失败（不存储）;反之,注册成功;
+				// 获取之前存储过的所有账号
+				var strQQ = getCookie("qq");
+				var arrQQ = strQQ.split("&");
+				console.log(arrQQ);
+				// 遍历之前所有的账号,看此次账号是否和之前账号一样
+				for (var i = 0;i < arrQQ.length;i++) {
+					if ($("#QQ").val() == arrQQ[i].trim()) {
+						alert("该账号已存在!");
+						return;
+					}
+				}
+				//如果不存在,则添加新的账号
+				addCookie("qq",getCookie("qq") + "&" + $("#QQ").val(),60 * 60 * 300);
+				console.log(getCookie("qq"));
+				addCookie("pw",getCookie("pw") + "&" + $("#pw").val(),60 * 60 * 300);
+			} else{//第一次注册
+				addCookie("qq",$("#QQ").val(),60 * 60 * 300);
+				addCookie("pw",$("#pw")	.val(),60 * 60 * 300);
+			}
+			$("#QQ").val("");
+			$("#pw").val("");
+			$("#repeatPW").val("");
+			
+			//注册成功,跳转到登录界面
+			location.href = "06login.html";
+	})
+	
+		</script>
+		
+		
+</html>
